@@ -200,10 +200,12 @@ exports.isLoggedIn = async (req, res, next) => {
         req.cookies.JWT,
         process.env.JWT_SECRET
       );
+
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
         return next();
       }
+
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
       }
@@ -214,4 +216,5 @@ exports.isLoggedIn = async (req, res, next) => {
       return next();
     }
   }
+  next();
 };
