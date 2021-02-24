@@ -35,7 +35,7 @@ const tourSchema = new mongoose.Schema(
       max: [5, "Rating must be below 5.0"],
       set: (val) => Math.round(val * 10) / 10,
     },
-    ratingsQuatity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
@@ -120,6 +120,12 @@ tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
 
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
+
 tourSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
@@ -135,6 +141,7 @@ tourSchema.pre(/^find/, function (next) {
     path: "guides",
     select: "-__v -passwordChangedAt",
   });
+  next();
 });
 
 const Tour = mongoose.model("Tour", tourSchema);
